@@ -10,13 +10,10 @@ const User = require("../models/User");
 router.post("/user/signup", async (req, res) => {
   try {
     const { email, password, confirmPassword } = req.body;
-    //Si username n'existe pas ou si email n'existe pas ou si ......
     if (!email || !password || confirmPassword !== "boolean") {
       return res.status(400).json({ message: "missing parameters" });
     }
-    //Si l'email est deja utilise par quelqu'un d'autre on renvoie une erreur
     const emailAllReadyUsed = await User.findOne({ email: email });
-    //console.log(emailAllReadyUsed);
     if (emailAllReadyUsed) {
       return res.status(409).json({ message: "email already used" });
     }
