@@ -7,7 +7,7 @@ const encBase64 = require("crypto-js/enc-base64");
 
 const User = require("../models/User");
 
-router.post("/user/signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
     const { email, password, confirmPassword } = req.body;
     if (!email || !password || confirmPassword !== "boolean") {
@@ -41,7 +41,7 @@ router.post("/user/signup", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-router.post("/user/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
