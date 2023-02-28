@@ -10,7 +10,7 @@ app.use(express.json());
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
 mongoose.set("strictQuery", true);
-mongoose.connect("mongodb://localhost:27017");
+mongoose.connect(process.env.MONGODB_URI);
 
 app.get("/characters", async (req, res) => {
   try {

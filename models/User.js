@@ -6,9 +6,7 @@ const User = mongoose.model(
   {
     email: String,
 
-    account: {
-      username: String,
-    },
+    account: { username: String },
 
     token: String,
 

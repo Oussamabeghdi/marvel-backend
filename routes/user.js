@@ -9,8 +9,8 @@ const User = require("../models/User");
 
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password, confirmPassword } = req.body;
-    if (!email || !password || confirmPassword !== "boolean") {
+    const { email, password, confirmPassword, username } = req.body;
+    if (!email || !username || !password || !confirmPassword) {
       return res.status(400).json({ message: "missing parameters" });
     }
     const emailAllReadyUsed = await User.findOne({ email: email });
@@ -23,9 +23,7 @@ router.post("/signup", async (req, res) => {
 
     const newUser = new User({
       email,
-      account: {
-        username,
-      },
+      account: { username },
       token,
       hash,
       salt,
