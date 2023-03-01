@@ -65,6 +65,10 @@ app.get("/comics/:characterId", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  console.log("test serveur");
+});
+
 app.all("*", (req, res) => {
   res.status(404).json({ message: "This route doesn't exist" });
 });
