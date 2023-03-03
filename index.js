@@ -5,10 +5,12 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
+
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
+
 mongoose.set("strictQuery", true);
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -65,7 +67,7 @@ app.get("/comics/:characterId", async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
+app.get("/*", (req, res) => {
   console.log("test serveur");
 });
 

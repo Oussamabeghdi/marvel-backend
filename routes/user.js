@@ -10,6 +10,7 @@ const User = require("../models/User");
 router.post("/signup", async (req, res) => {
   try {
     const { email, password, confirmPassword, username } = req.body;
+    console.log(req.body);
     if (!email || !username || !password || !confirmPassword) {
       return res.status(400).json({ message: "missing parameters" });
     }
@@ -39,18 +40,22 @@ router.post("/signup", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    // console.log(req.body);
     const user = await User.findOne({ email: email });
+    // console.log(user);
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "User not found" });
     }
 
-    const newHash = SHA256(user.salt + password).toString(encBase64);
-
+    const newHash = SHA256(password + user.salt).toString(encBase64);
+    // console.log(newHash);
+    // console.log(user.hash);
     if (newHash !== user.hash) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized 1" });
     }
     res.json({
       _id: user._id,
