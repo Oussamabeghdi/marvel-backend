@@ -11,6 +11,9 @@ app.use(cors());
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
 
+const favoriteRoutes = require("./routes/favorite");
+app.use(favoriteRoutes);
+
 mongoose.set("strictQuery", true);
 mongoose.connect(process.env.MONGODB_URI);
 

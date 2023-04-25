@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
-const Favori = mongoose.model("Favori", {
-  id: String,
-});
+// const Favori = mongoose.model("Favori", {
+//   id: String,
+// });
