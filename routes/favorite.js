@@ -54,7 +54,7 @@ router.put("/users/:userId/favorites/comics/:comicId", async (req, res) => {
         .json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
-    const userComicFavorites = user.favoritesComics; // ['1', '2', '3'] => 4
+    const userComicFavorites = user.favoritesComics || []; // ['1', '2', '3'] => 4
 
     if (userComicFavorites.includes(comicId)) {
       return res
@@ -85,7 +85,7 @@ router.put(
           .json({ message: `L'utilisateur ${userId} n'existe pas` });
       }
 
-      const userCharacterFavorites = user.favoritesCharacters; // ['1', '2', '3'] => 4
+      const userCharacterFavorites = user.favoritesCharacters || []; // ['1', '2', '3'] => 4
 
       if (userCharacterFavorites.includes(characterId)) {
         return res
@@ -117,7 +117,7 @@ router.delete("/users/:userId/favorites/comics/:comicId", async (req, res) => {
         .json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
-    const userComicFavorites = user.favoritesComics; // ['1', '2', '3', '4'] => delete 4
+    const userComicFavorites = user.favoritesComics || []; // ['1', '2', '3', '4'] => delete 4
 
     if (!userComicFavorites.includes(comicId)) {
       return res
@@ -149,7 +149,7 @@ router.delete(
           .json({ message: `L'utilisateur ${userId} n'existe pas` });
       }
 
-      const userCharacterFavorites = user.favoritesCharacters;
+      const userCharacterFavorites = user.favoritesCharacters || [];
 
       if (!userCharacterFavorites.includes(characterId)) {
         return res
