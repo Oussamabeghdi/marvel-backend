@@ -85,17 +85,15 @@ router.put(
           .json({ message: `L'utilisateur ${userId} n'existe pas` });
       }
 
-      const userCharacterFavorites = user.favoritesCharacters || []; // ['1', '2', '3'] => 4
+      const userCharacterFavorites = user.favoritesCharacters || [];
 
       if (userCharacterFavorites.includes(characterId)) {
-        return res
-          .status(409)
-          .json({
-            message: `Le personnage ${characterId} est déjà dans les favoris`,
-          });
+        return res.status(409).json({
+          message: `Le personnage ${characterId} est déjà dans les favoris`,
+        });
       }
 
-      userCharacterFavorites.push(characterId); // ['1', '2', '3', '4']
+      userCharacterFavorites.push(characterId);
 
       await user.save();
       res.status(200).json(userCharacterFavorites);
@@ -152,11 +150,9 @@ router.delete(
       const userCharacterFavorites = user.favoritesCharacters || [];
 
       if (!userCharacterFavorites.includes(characterId)) {
-        return res
-          .status(409)
-          .json({
-            message: `Le personnage ${characterId} n'est pas dans les favoris`,
-          });
+        return res.status(409).json({
+          message: `Le personnage ${characterId} n'est pas dans les favoris`,
+        });
       }
 
       const index = userCharacterFavorites.indexOf(characterId);

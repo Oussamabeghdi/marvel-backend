@@ -1,7 +1,6 @@
 {
   "name": "marvel-back",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,6 +16,17 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.9.1",
+    "nodemailer": "^6.9.14",
     "uid2": "^1.0.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oussamabeghdi/marvel-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Oussamabeghdi/marvel-backend/issues"
+  },
+  "homepage": "https://github.com/Oussamabeghdi/marvel-backend#readme",
+  "description": ""
 }
