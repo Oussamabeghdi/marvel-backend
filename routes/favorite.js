@@ -21,17 +21,13 @@ router.get("/users/:userId/favorites/:favoriteType", async (req, res) => {
     const favoriteType = req.params.favoriteType;
 
     if (!FAVORITES_TYPES.includes(favoriteType)) {
-      return res
-        .status(404)
-        .json({ message: `Le type de favoris ${favoriteType} n'existe pas` });
+      return res.status(404).json({ message: `Le type de favoris ${favoriteType} n'existe pas` });
     }
 
     const user = await User.findById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: `L'utilisateur ${userId} n'existe pas` });
+      return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
     const favorites = getFavorites[favoriteType](user);
@@ -49,17 +45,13 @@ router.put("/users/:userId/favorites/comics/:comicId", async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: `L'utilisateur ${userId} n'existe pas` });
+      return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
     const userComicFavorites = user.favoritesComics || []; // ['1', '2', '3'] => 4
 
     if (userComicFavorites.includes(comicId)) {
-      return res
-        .status(409)
-        .json({ message: `Le comic ${comicId} est déjà dans les favoris` });
+      return res.status(409).json({ message: `Le comic ${comicId} est déjà dans les favoris` });
     }
 
     userComicFavorites.push(comicId); // ['1', '2', '3', '4']
@@ -71,37 +63,32 @@ router.put("/users/:userId/favorites/comics/:comicId", async (req, res) => {
   }
 });
 
-router.put(
-  "/users/:userId/favorites/characters/:characterId",
-  async (req, res) => {
-    try {
-      const characterId = req.params.characterId;
-      const userId = req.params.userId;
-      const user = await User.findById(userId);
+router.put("/users/:userId/favorites/characters/:characterId", async (req, res) => {
+  try {
+    const characterId = req.params.characterId;
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
 
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: `L'utilisateur ${userId} n'existe pas` });
-      }
-
-      const userCharacterFavorites = user.favoritesCharacters || [];
-
-      if (userCharacterFavorites.includes(characterId)) {
-        return res.status(409).json({
-          message: `Le personnage ${characterId} est déjà dans les favoris`,
-        });
-      }
-
-      userCharacterFavorites.push(characterId);
-
-      await user.save();
-      res.status(200).json(userCharacterFavorites);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+    if (!user) {
+      return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
+
+    const userCharacterFavorites = user.favoritesCharacters || [];
+
+    if (userCharacterFavorites.includes(characterId)) {
+      return res.status(409).json({
+        message: `Le personnage ${characterId} est déjà dans les favoris`,
+      });
+    }
+
+    userCharacterFavorites.push(characterId);
+
+    await user.save();
+    res.status(200).json(userCharacterFavorites);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-);
+});
 
 router.delete("/users/:userId/favorites/comics/:comicId", async (req, res) => {
   try {
@@ -110,17 +97,13 @@ router.delete("/users/:userId/favorites/comics/:comicId", async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: `L'utilisateur ${userId} n'existe pas` });
+      return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
     const userComicFavorites = user.favoritesComics || []; // ['1', '2', '3', '4'] => delete 4
 
     if (!userComicFavorites.includes(comicId)) {
-      return res
-        .status(409)
-        .json({ message: `Le comic ${comicId} n'est pas dans les favoris` });
+      return res.status(409).json({ message: `Le comic ${comicId} n'est pas dans les favoris` });
     }
 
     const index = userComicFavorites.indexOf(comicId);
@@ -133,38 +116,33 @@ router.delete("/users/:userId/favorites/comics/:comicId", async (req, res) => {
   }
 });
 
-router.delete(
-  "/users/:userId/favorites/characters/:characterId",
-  async (req, res) => {
-    try {
-      const characterId = req.params.characterId;
-      const userId = req.params.userId;
-      const user = await User.findById(userId);
+router.delete("/users/:userId/favorites/characters/:characterId", async (req, res) => {
+  try {
+    const characterId = req.params.characterId;
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
 
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: `L'utilisateur ${userId} n'existe pas` });
-      }
-
-      const userCharacterFavorites = user.favoritesCharacters || [];
-
-      if (!userCharacterFavorites.includes(characterId)) {
-        return res.status(409).json({
-          message: `Le personnage ${characterId} n'est pas dans les favoris`,
-        });
-      }
-
-      const index = userCharacterFavorites.indexOf(characterId);
-      userCharacterFavorites.splice(index, 1); // ['1', '2', '3']
-
-      await user.save();
-      return res.status(200).json(userCharacterFavorites);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+    if (!user) {
+      return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
+
+    const userCharacterFavorites = user.favoritesCharacters || [];
+
+    if (!userCharacterFavorites.includes(characterId)) {
+      return res.status(409).json({
+        message: `Le personnage ${characterId} n'est pas dans les favoris`,
+      });
+    }
+
+    const index = userCharacterFavorites.indexOf(characterId);
+    userCharacterFavorites.splice(index, 1); // ['1', '2', '3']
+
+    await user.save();
+    return res.status(200).json(userCharacterFavorites);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-);
+});
 
 module.exports = router;
 

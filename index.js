@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const mongoose = require("mongoose");
+
 require("dotenv").config();
 
 const app = express();
@@ -74,19 +75,19 @@ app.get("/comics", async (req, res) => {
 });
 
 // Route pour obtenir les comics d'un personnage spécifique par ID
-app.get("/comics/:characterId", async (req, res) => {
-  try {
-    // console.log(req.params);
-    // Requête à l'API Marvel pour obtenir les comics du personnage
-    const response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/comics/${req.params.characterId}?apiKey=${process.env.API_KEY}`
-    );
-    console.log(response.data);
-    res.json(response.data);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+// app.get("/comics/:characterId", async (req, res) => {
+//   try {
+//     // console.log(req.params);
+//     // Requête à l'API Marvel pour obtenir les comics du personnage
+//     const response = await axios.get(
+//       `https://lereacteur-marvel-api.herokuapp.com/comics/${req.params.characterId}?apiKey=${process.env.API_KEY}`
+//     );
+//     console.log(response.data);
+//     res.json(response.data);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
 
 // Route pour obtenir les détails d'un comic spécifique par ID
 app.get("/comic/:comicId", async (req, res) => {
@@ -95,8 +96,11 @@ app.get("/comic/:comicId", async (req, res) => {
     const response = await axios.get(
       `https://lereacteur-marvel-api.herokuapp.com/comic/${req.params.comicId}?apiKey=${process.env.API_KEY}`
     );
+
     res.json(response.data);
   } catch (error) {
+    console.error("Error occurred:", error.message); // Log de l'erreur
+
     // Gestion des erreurs et envoi d'une réponse d'erreur au client
     res.status(400).json({ message: error.message });
   }
