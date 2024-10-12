@@ -48,13 +48,13 @@ router.put("/users/:userId/favorites/comics/:comicId", async (req, res) => {
       return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
-    const userComicFavorites = user.favoritesComics || []; // ['1', '2', '3'] => 4
+    const userComicFavorites = user.favoritesComics || [];
 
     if (userComicFavorites.includes(comicId)) {
       return res.status(409).json({ message: `Le comic ${comicId} est déjà dans les favoris` });
     }
 
-    userComicFavorites.push(comicId); // ['1', '2', '3', '4']
+    userComicFavorites.push(comicId);
 
     await user.save();
     res.status(200).json(userComicFavorites);
@@ -100,7 +100,7 @@ router.delete("/users/:userId/favorites/comics/:comicId", async (req, res) => {
       return res.status(404).json({ message: `L'utilisateur ${userId} n'existe pas` });
     }
 
-    const userComicFavorites = user.favoritesComics || []; // ['1', '2', '3', '4'] => delete 4
+    const userComicFavorites = user.favoritesComics || [];
 
     if (!userComicFavorites.includes(comicId)) {
       return res.status(409).json({ message: `Le comic ${comicId} n'est pas dans les favoris` });

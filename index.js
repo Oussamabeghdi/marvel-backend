@@ -25,15 +25,13 @@ mongoose.connect(process.env.MONGODB_URI);
 app.get("/characters", async (req, res) => {
   try {
     // Récupération des paramètres de requête
-    const name = req.query.name || "";
-    const skip = req.query.skip || "0";
-    const limit = req.query.limit || "100";
     // Requête à l'API Marvel pour obtenir les personnages
+    // const skip = req.query.skip || "0";
+    // const limit = req.query.limit || "100";
+    // const name = req.query.name || "";
     const response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.API_KEY}&name=${name}&skip=${skip}&limit=${limit}`
+      `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.API_KEY}`
     );
-
-    // console.log(response.data);
     // Envoi de la réponse au client
     res.json(response.data);
   } catch (error) {

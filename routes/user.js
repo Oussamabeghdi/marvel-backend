@@ -14,7 +14,6 @@ router.post("/signup", async (req, res) => {
   try {
     const { email, password, confirmPassword, username } = req.body;
     console.log(req.body);
-
     if (!email || !username || !password || !confirmPassword) {
       return res.status(400).json({ message: "missing parameters." });
     }
@@ -23,22 +22,15 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "The passwords do not match." });
     }
     // Vérification que l'email n'est pas déjà utilisé
-
     const emailAllReadyUsed = await User.findOne({ email: email });
     if (emailAllReadyUsed) {
       return res.status(409).json({ message: "email already used" });
     }
     // Génération d'un token unique pour l'utilisateur
     const token = uid2(64);
-
     // Génération d'un salt unique pour le hachage du mot de passe
     const salt = uid2(16);
-
-    // Hachage du mot de passe avec le salt Rôle : Un salt est une chaîne aléatoire ajoutée au mot de passe avant le hachage pour éviter
-    // les attaques par tables arc-en-ciel et renforcer la sécurité des mots de passe hachés.
-    // Pourquoi l'inclure : Pour stocker le salt utilisé lors du hachage du mot de passe afin de vérifier les mots de passe lors de l'authentification.
     const hash = SHA256(password + salt).toString(encBase64);
-
     // Création d'un nouvel utilisateur avec les informations fournies
     const newUser = new User({
       email,
@@ -47,19 +39,14 @@ router.post("/signup", async (req, res) => {
       hash,
       salt,
     });
-
     // Sauvegarde du nouvel utilisateur dans la base de données
     await newUser.save();
-
     // Préparation de la réponse à envoyer au client
     const response = {
       _id: newUser._id,
       account: newUser.account,
       token: newUser.token,
     };
-
-    // Envoi de la réponse au client
-    // res.json(response);
     if (response) {
       res.status(200).json({ message: "succès!" });
     }
@@ -143,3 +130,6 @@ router.delete("/user/:id", async (req, res) => {
 });
 
 module.exports = router;
+// Hachage du mot de passe avec le salt Rôle : Un salt est une chaîne aléatoire ajoutée au mot de passe avant le hachage pour éviter
+// les attaques par tables arc-en-ciel et renforcer la sécurité des mots de passe hachés.
+// Pourquoi l'inclure : Pour stocker le salt utilisé lors du hachage du mot de passe afin de vérifier les mots de passe lors de l'authentification.
