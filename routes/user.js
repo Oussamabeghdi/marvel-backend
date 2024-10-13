@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const isAuthenticated = require("../middlewares/isAuthenticated");
 const uid2 = require("uid2");
-const SHA256 = require("crypto-js/sha256");
-const encBase64 = require("crypto-js/enc-base64");
+const bcrypt = require("bcrypt");
+
 require("dotenv").config();
 const User = require("../models/User");
 
@@ -26,12 +25,13 @@ router.post("/signup", async (req, res) => {
     if (emailAllReadyUsed) {
       return res.status(409).json({ message: "email already used" });
     }
-    // Génération d'un token unique pour l'utilisateur
-    const token = uid2(64);
-    // Génération d'un salt unique pour le hachage du mot de passe
-    const salt = uid2(16);
-    const hash = SHA256(password + salt).toString(encBase64);
+
+    const saltRounds = 10; // Nombre de tours pour le hachage
+
+    const hash = await bcrypt.hash(password, saltRounds);
     // Création d'un nouvel utilisateur avec les informations fournies
+    console.log(hash);
+
     const newUser = new User({
       email,
       account: { username },
@@ -68,9 +68,8 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    const newHash = SHA256(password + user.salt).toString(encBase64);
-
-    if (newHash !== user.hash) {
+    const isPasswordValid = await bcrypt.compare(password, user.hash);
+    if (!isPasswordValid) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     res.json({
@@ -102,8 +101,6 @@ router.get("/user/:id", async (req, res) => {
       username: user.account.username,
       email: user.email,
       token: user.token,
-      hash: user.hash,
-      salt: user.salt,
     };
 
     res.json(userInfo);
@@ -133,3 +130,15 @@ module.exports = router;
 // Hachage du mot de passe avec le salt Rôle : Un salt est une chaîne aléatoire ajoutée au mot de passe avant le hachage pour éviter
 // les attaques par tables arc-en-ciel et renforcer la sécurité des mots de passe hachés.
 // Pourquoi l'inclure : Pour stocker le salt utilisé lors du hachage du mot de passe afin de vérifier les mots de passe lors de l'authentification.
+
+// Génération d'un token unique pour l'utilisateur
+// const token = uid2(64);
+// // Génération d'un salt unique pour le hachage du mot de passe
+// const salt = uid2(16);
+// const hash = SHA256(password + salt).toString(encBase64);
+
+// const newHash = SHA256(password + user.salt).toString(encBase64);
+
+// if (newHash !== user.hash) {
+//   return res.status(401).json({ message: "Unauthorized" });
+// }
