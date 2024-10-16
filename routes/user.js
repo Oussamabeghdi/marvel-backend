@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const SHA256 = require("crypto-js/sha256");
+const encBase64 = require("crypto-js/enc-base64");
 
 const uid2 = require("uid2");
-const bcrypt = require("bcrypt");
+// const encBase64 = require("encbase64")
+// const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 const User = require("../models/User");
@@ -25,12 +28,17 @@ router.post("/signup", async (req, res) => {
     if (emailAllReadyUsed) {
       return res.status(409).json({ message: "email already used" });
     }
+    const token = uid2(64);
+    const salt = uid2(16);
+    const hash = SHA256(password + salt).toString(encBase64);
 
-    const saltRounds = 10; // Nombre de tours pour le hachage
+    // Nombre de tours pour le hachage
+    // const saltRounds = 10;
 
-    const hash = await bcrypt.hash(password, saltRounds);
-    // Création d'un nouvel utilisateur avec les informations fournies
-    console.log(hash);
+    // const hash = await bcrypt.hash(password, saltRounds);
+    // // Création d'un nouvel utilisateur avec les informations fournies
+    // console.log({ hash: hash });
+    // console.log({ token: token });
 
     const newUser = new User({
       email,
@@ -48,7 +56,7 @@ router.post("/signup", async (req, res) => {
       token: newUser.token,
     };
     if (response) {
-      res.status(200).json({ message: "succès!" });
+      res.status(200).json(response.token);
     }
   } catch (error) {
     // Gestion des erreurs et envoi d'une réponse d'erreur au client
@@ -67,11 +75,21 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
+    const salt = uid2(16);
+    const newHash = SHA256(password + user.salt).toString(encBase64);
 
-    const isPasswordValid = await bcrypt.compare(password, user.hash);
-    if (!isPasswordValid) {
+    if (newHash !== user.hash) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    // const isPasswordValid = await bcrypt.compare(password, user.hash);
+    // if (!isPasswordValid) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
+    // const isPasswordValid = await bcrypt.compare(password, user.hash);
+    // if (!isPasswordValid) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     res.json({
       _id: user._id,
       account: user.account,
@@ -132,13 +150,4 @@ module.exports = router;
 // Pourquoi l'inclure : Pour stocker le salt utilisé lors du hachage du mot de passe afin de vérifier les mots de passe lors de l'authentification.
 
 // Génération d'un token unique pour l'utilisateur
-// const token = uid2(64);
 // // Génération d'un salt unique pour le hachage du mot de passe
-// const salt = uid2(16);
-// const hash = SHA256(password + salt).toString(encBase64);
-
-// const newHash = SHA256(password + user.salt).toString(encBase64);
-
-// if (newHash !== user.hash) {
-//   return res.status(401).json({ message: "Unauthorized" });
-// }
