@@ -33,17 +33,21 @@ router.post("/signup", async (req, res) => {
     const hash = await bcrypt.hash(password, saltRounds);
     // // Création d'un nouvel utilisateur avec les informations fournies
     // console.log({ hash: hash });
-    // console.log({ token: token });
+    console.log({ token: token });
 
     const newUser = new User({
       email,
       account: { username },
       token,
       hash,
-      salt,
     });
     // Sauvegarde du nouvel utilisateur dans la base de données
     await newUser.save();
+    res.cookie("token-user", token, {
+      httpOnly: true, // Empêche l'accès via JavaScript
+      secure: process.env.NODE_ENV === "production", // Active "secure" uniquement en production
+      sameSite: "strict", // Empêche les requêtes CSRF
+    });
     // Préparation de la réponse à envoyer au client
     const response = {
       _id: newUser._id,
@@ -71,18 +75,16 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    if (newHash !== user.hash) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const isPasswordValid = await bcrypt.compare(password, user.hash);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // const isPasswordValid = await bcrypt.compare(password, user.hash);
-    // if (!isPasswordValid) {
-    //   return res.status(401).json({ message: "Unauthorized" });
-    // }
+    res.cookie("token-user", user.token, {
+      httpOnly: true, // Empêche l'accès au cookie via JavaScript
+      secure: process.env.NODE_ENV === "production", // Active "secure" uniquement en production
+      sameSite: "strict", // Empêche les requêtes CSRF dans les navigateurs modernes
+    });
     res.json({
       _id: user._id,
       account: user.account,
@@ -91,7 +93,7 @@ router.post("/login", async (req, res) => {
     });
     // res.status(200).json({  });
   } catch (error) {
-    console.log(error.response.data);
+    // console.log(error.response.data);
     res.status(400).json({ message: error.message });
   }
 });
