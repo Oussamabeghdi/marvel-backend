@@ -28,9 +28,9 @@ app.get("/characters", async (req, res) => {
     // Requête à l'API Marvel pour obtenir les personnages
     // const skip = req.query.skip || "0";
     // const limit = req.query.limit || "100";
-    // const name = req.query.name || "";
+    const name = req.query.name || "";
     const response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.API_KEY}`
+      `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.API_KEY}&name=${name}`
     );
     // Envoi de la réponse au client
     res.json(response.data);
