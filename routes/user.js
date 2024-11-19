@@ -12,7 +12,7 @@ const User = require("../models/User");
 router.post("/signup", async (req, res) => {
   try {
     const { email, password, confirmPassword, username } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     if (!email || !username || !password || !confirmPassword) {
       return res.status(400).json({ message: "missing parameters." });
     }
@@ -30,7 +30,7 @@ router.post("/signup", async (req, res) => {
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
     // // Création d'un nouvel utilisateur avec les informations fournies
-    console.log({ token: token });
+    // console.log({ token: token });
 
     const newUser = new User({
       email,
@@ -111,10 +111,39 @@ router.get("/user/:id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+router.put("/update/user/:id", async (req, res) => {
+  try {
+    const allowedUpdates = ["account.username", "email", "password"];
+    const isValidOperation = Object.keys(req.body).every((key) => allowedUpdates.includes(key));
+
+    if (!isValidOperation) {
+      return res.status(400).json({ message: "Champs non autorisés" });
+    }
+
+    const updates = req.body;
+    console.log(updates);
+
+    const findUserAndUpdate = await User.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+    if (!findUserAndUpdate) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    res.status(200).json({
+      message: "Utilisateur mis à jour avec succès",
+      data: findUserAndUpdate,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user", error });
+  }
+});
 router.delete("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
     const result = await User.findByIdAndDelete(userId);
+    res.status(200).json(updatedUser);
+
     if (result) {
       res.status(200).json({ message: "Votre compte a été supprimer!" });
     } else {

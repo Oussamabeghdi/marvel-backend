@@ -32,6 +32,7 @@ router.get("/users/:userId/favorites/:favoriteType", async (req, res) => {
 
     const favorites = getFavorites[favoriteType](user);
 
+    console.log(favorites);
     res.status(200).json(favorites);
   } catch (err) {
     res.status(500).json({ message: err.message });
